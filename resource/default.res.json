@@ -1,0 +1,59 @@
+{
+	"groups": [
+		{
+			"keys": "button_down_png,button_up_png",
+			"name": "preload"
+		},
+		{
+			"keys": "gameBg,car0_png,successed_png,fighting_png,bgNew_png,soundCar_mp3",
+			"name": "myRes"
+		}
+	],
+	"resources": [
+		{
+			"url": "assets/Button/button_down.png",
+			"type": "image",
+			"name": "button_down_png"
+		},
+		{
+			"url": "assets/Button/button_up.png",
+			"type": "image",
+			"name": "button_up_png"
+		},
+		{
+			"url": "assets/MyResource/bg.png",
+			"type": "image",
+			"name": "gameBg"
+		},
+		{
+			"url": "assets/MyResource/car0.png",
+			"type": "image",
+			"name": "car0_png"
+		},
+		{
+			"url": "assets/MyResource/loadingBg.png",
+			"type": "image",
+			"name": "loadingBg_png"
+		},
+		{
+			"url": "assets/MyResource/successed.png",
+			"type": "image",
+			"name": "successed_png"
+		},
+		{
+			"url": "assets/MyResource/fighting.png",
+			"type": "image",
+			"name": "fighting_png"
+		},
+		{
+			"url": "assets/MyResource/bgNew.png",
+			"type": "image",
+			"name": "bgNew_png"
+		},
+		{
+			"name": "soundCar_mp3",
+			"type": "sound",
+			"url": "assets/MyResource/soundCar.mp3"
+		}
+	]
+}

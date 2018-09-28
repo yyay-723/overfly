@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<e:Skin class="gameOverSkin" states="up,down,disabled" minHeight="50" minWidth="100" xmlns:e="http://ns.egret.com/eui">
+    <e:Image id="result" source="successed_png" scaleX=".8" scaleY=".8" />
+
+    <e:Button id="playAgainBtn">
+		<e:skinName>
+			<e:Skin states="up,down,disabled">
+				<e:Image width="200" height="60" scale9Grid="1,3,8,8" alpha.disabled="0.5"
+                                source="button_up_png"
+                                source.down="button_down_png"/>
+                                <e:Label id="labelDisplay" top="8" bottom="8" left="8" right="8"
+                                        size="30"
+                                        textColor="0xFFFFFF" verticalAlign="middle" textAlign="center"/>
+                                <e:Image id="iconDisplay" horizontalCenter="0" verticalCenter="0"/>
+			</e:Skin>
+		</e:skinName>
+	</e:Button>
+    
+</e:Skin>
