@@ -13,11 +13,11 @@ var game;
         }
         Store.gameResult = false; //默认为true,表示是成功，继续挑战；false表示失败，再试一次
         Store.distanceLength = 0; //记录走过的路程距离
-        Store.targetDistance = 10000; //目标距离
-        Store.stageH = 910; //舞台高
-        // public static stageH:number = 1136;//舞台高
+        Store.targetDistance = 1400; //目标距离
+        // public static stageH:number = 910;//舞台高
+        Store.stageH = 1136; //舞台高
         Store.stageW = 640; //舞台宽
-        Store.currentSpeedY = 6; //当前车速度
+        Store.currentSpeedY = 0; //当前车速度
         return Store;
     }());
     game.Store = Store;

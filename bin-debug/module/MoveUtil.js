@@ -19,16 +19,29 @@ var game;
         function MoveUtil(target, isLoop) {
             if (isLoop === void 0) { isLoop = true; }
             var _this = _super.call(this) || this;
+            _this.p = document.createElement('p');
+            _this.span = document.createElement('span');
             _this._startPos = new egret.Point(0, 0); //默认起点位置
             _this._endPos = new egret.Point(0, game.Store.stageH); //默认终点位置
-            _this._speedY = 6;
-            _this._startSpeedY = 6; //初始速度
+            _this._speedY = 1;
+            _this._startSpeedY = 0; //初始速度
             _this.obj = null;
             _this.isLoop = true; //是否循环移动,默认为true
             // private _aSpeedY: number = 0.1;
             _this.isGetDistance = false; // 默认不获取
+            // _aSpeedY取值在-0.5 ～ 1之间，作为加速度，位移和加速度公式s=1/2at^2
+            // 速度和加速度公式v1 = v0 + at
+            _this.time = 0;
             _this.obj = target;
             _this.isLoop = isLoop;
+            _this.p.id = 'myConsole';
+            _this.p.style.position = 'absolute';
+            _this.p.style.fontSize = '20px';
+            document.getElementsByTagName('body')[0].appendChild(_this.p);
+            _this.span.id = 'myConsole2';
+            _this.span.style.position = 'absolute';
+            _this.span.style.fontSize = '20px';
+            document.getElementsByTagName('body')[0].appendChild(_this.span);
             return _this;
         }
         Object.defineProperty(MoveUtil.prototype, "startPos", {
@@ -63,15 +76,21 @@ var game;
             if (isTrue === void 0) { isTrue = false; }
             this.isGetDistance = isTrue;
         };
-        MoveUtil.prototype.onEnterFrame = function (_aSpeedY) {
+        MoveUtil.prototype.onEnterFrame = function (a) {
             if (!this.obj) {
                 return null;
             }
-            if (this._speedY <= 0) {
+            if (this._speedY < 0) {
+                document.getElementById('myConsole').innerHTML = this._speedY.toString();
                 game.Store.currentSpeedY = this._startSpeedY;
                 return;
             }
+            var time = this.time;
+            setInterval(function () {
+                this.time = this.time + 1;
+            }, 1000);
             this.obj.y += Math.floor(this._speedY);
+            document.getElementById('myConsole').innerHTML = this.obj.y + '  ' + this._speedY + '  ' + a + '  ' + this.time + Math.random();
             if (this.obj.y >= this._endPos.y && this.isLoop) {
                 this.obj.y = this._startPos.y;
             }
@@ -79,10 +98,12 @@ var game;
                 this.obj = null;
                 return;
             }
-            this._speedY += _aSpeedY;
-            if (this.isLoop && this.isGetDistance) {
-                game.Store.distanceLength += (this._speedY + this._startSpeedY) * 0.5;
-                game.Store.currentSpeedY = this._speedY;
+            var tempSpeedY = this._speedY + a;
+            this._speedY = tempSpeedY >= 0 ? tempSpeedY : 0;
+            if (this.isGetDistance) {
+                game.Store.distanceLength = 0.5 * a * time * time;
+                // Store.distanceLength += (this._speedY + this._startSpeedY) * 0.5;
+                game.Store.currentSpeedY = game.Store.currentSpeedY + a * time;
                 // console.log("speed = " + Store.currentSpeedY + " distance = " + Store.distanceLength);
             }
         };

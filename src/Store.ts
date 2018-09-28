@@ -10,13 +10,13 @@ module game {
 		
 		public static distanceLength: number = 0;//记录走过的路程距离
 		
-		public static targetDistance:number = 10000;//目标距离
+		public static targetDistance:number = 1400;//目标距离
 		
-		public static stageH:number = 910;//舞台高
-		// public static stageH:number = 1136;//舞台高
+		// public static stageH:number = 910;//舞台高
+		public static stageH:number = 1136;//舞台高
 		
 		public static stageW:number = 640;//舞台宽
 		
-		public static currentSpeedY:number = 6;//当前车速度
+		public static currentSpeedY:number = 0;//当前车速度
 	}
 }

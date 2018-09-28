@@ -5,8 +5,13 @@ module game {
 	 * 游戏进行中
 	 */
 	export class GamePlaying extends eui.Component{
+		public spanaa = document.createElement('span');
 		public constructor() {
 			super();
+			this.spanaa.id = 'myConsole3';
+			this.spanaa.style.position = 'absolute';
+			this.spanaa.style.fontSize = '20px';
+			document.getElementsByTagName('body')[0].appendChild(this.spanaa);
 			this.skinName = "resource/eui_skins/mySkins/gamePlayingSkin.exml";
 			this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAdded, this);
 			this.addEventListener(egret.Event.REMOVED_FROM_STAGE, this.onRemoved, this);
@@ -15,11 +20,13 @@ module game {
 		private sceneEvent: SceneEvent = new SceneEvent(SceneEvent.ChangeScene);
 		public gameBg: eui.Image;
 		public gameBgClone: eui.Image;
+		public gameBgClone2: eui.Image;
 		public gameCar: eui.Image;
+		public gameMapArray: any[] = [];
 
 		private isTouching: boolean = false;
-		private gameBgMove: MoveUtil;
-		private gameBgCloneMove: MoveUtil;
+		// private gameBgMove: MoveUtil;
+		// private gameBgCloneMove: MoveUtil;
 
     	private soundChannel:egret.SoundChannel;
 
@@ -32,38 +39,83 @@ module game {
 			this.sceneEvent.eventType = SceneEvent.GAME_OVER;
 			this.gameBg.width = Store.stageW;
 			this.gameBg.height = Store.stageH;
-			this.gameBg.y = 0;
+			//this.gameBg.y = 0;
 
 			this.gameBgClone.width = Store.stageW;
 			this.gameBgClone.height = Store.stageH;
-			this.gameBgClone.y = -Store.stageH;
 
+			this.gameBgClone2.width = Store.stageW;
+			this.gameBgClone2.height = Store.stageH;
+			//this.gameBgClone.y = -2*Store.stageH;
+			// 车的位置，保持在屏幕下方
 			this.gameCar.x = Store.stageW/2 - this.gameCar.width/2;
-			this.gameCar.y = Store.stageH - this.gameCar.height;
+			this.gameCar.y = Store.stageH - this.gameCar.height - 100;
 			// this.gameCar.y = 977,  this.gameCar.height = 159, Store.stageH = 1136。
-			console.log(Store.stageH - this.gameCar.height);
+			console.log(Store.stageH);
+			let randTime = 10;
+			// 河流随机出现在一个位置
+			let riverPos = Math.floor(Math.random() * randTime);
+			let bg = null;
+			bg = new MoveUtil(this.gameBgClone, false);
+			bg.startPos = new egret.Point(0, 0);
+			bg.endPos = new egret.Point(0, 2*Store.stageH);
+			this.gameMapArray.push(bg);
 
-			// 动画
-			this.gameBgMove = new MoveUtil(this.gameBg);
+			bg = new MoveUtil(this.gameBg, false);
+			this.gameBg.y = -Store.stageH;
+			bg.startPos = new egret.Point(0, -Store.stageH);
+			bg.endPos = new egret.Point(0, Store.stageH);
+			this.gameMapArray.push(bg);
+
+			bg = new MoveUtil(this.gameBgClone2, false);
+			this.gameBgClone2.y = -2*Store.stageH;
+			bg.startPos = new egret.Point(0, -2*Store.stageH);
+			bg.endPos = new egret.Point(0, 0);
+			this.gameMapArray.push(bg);
+			// for (let i = 1; i <= randTime; i++) {
+			// 	let bg = null;
+			// 	if (i === riverPos) {
+			// 		console.log('river');
+			// 		this.gameBg.y = -(i-1)*Store.stageH;
+			// 		bg = new MoveUtil(this.gameBg, false);
+			// 	} else {
+			// 		console.log('road');
+			// 		this.gameBgClone.y = -(i-1)*Store.stageH;
+			// 		console.log(this.gameBgClone.y);
+			// 		bg = new MoveUtil(this.gameBgClone, false);
+			// 	}
+			// 	bg._startPos = new egret.Point(0, -(i-1)*Store.stageH);
+			// 	bg._endPos = new egret.Point(0, (randTime-i)*Store.stageH);
+			// 	console.log(bg._startPos);
+			// 	console.log('end'+bg._endPos);
+			// 	this.gameMapArray.push(bg);
+			// 	bg.getDistance(true);
+			// }
+			console.log(this.gameMapArray);
+			/*
+			// 动画：带河流的部分y轴从0移动到H，公路部分比较长，从-2H移动到0
+			this.gameBgMove = new MoveUtil(this.gameBg, false);
 			this.gameBgMove.startPos = new egret.Point(0, 0);
 			this.gameBgMove.endPos = new egret.Point(0, Store.stageH);
 
-			this.gameBgCloneMove = new MoveUtil(this.gameBgClone);
-			this.gameBgCloneMove.startPos = new egret.Point(0, -Store.stageH);
+			this.gameBgCloneMove = new MoveUtil(this.gameBgClone, false);
+			this.gameBgCloneMove.startPos = new egret.Point(0, -2*Store.stageH);
 			this.gameBgCloneMove.endPos = new egret.Point(0, 0);
-
+			
 			this.gameBgMove.getDistance(true); //这里只需要一个设置为true就可以。
+			*/
+			this.gameMapArray[0].getDistance(true); //这里只需要一个设置为true就可以。
 
-			// this.addEventListener(egret.Event.ENTER_FRAME, this.startAnimationFrame, this);
-
+			
 			// 陀螺仪
 			// 创建 DeviceOrientation 类
 			var orientation = new egret.DeviceOrientation();
 			// 添加事件监听器
 			orientation.addEventListener(egret.Event.CHANGE,this.startAnimation,this);
+			// orientation.addEventListener(egret.Event.ENTER_FRAME, this.startAnimationFrame, this);
 			//开始监听设备方向变化
         	orientation.start();
-
+			
 			// 添加音效
 			// var sound:egret.Sound = RES.getRes("sound_mp3");
 			var sound:egret.Sound = RES.getRes("soundCar_mp3");
@@ -79,64 +131,32 @@ module game {
 			this.resetData();
 		}
 
-		private startAnimationFrame() {
-			// 检测游戏是否结束
-			if (this.isOver()) {
-				this.onGameOver();
-			}
-
-			// 检测是否遇到河流
-			if (Store.distanceLength >= 300) {
-				this.isHitRiver();
-			}
-
-			// 检测是否跨越河流，河流宽200，车身长159，所以是300 + 359 取1000
-			if (Store.distanceLength >= 800) {
-				this.isAcrossRiver();
-			}
-
-			let random = Math.random();
-			let _aSpeed = 0.1;
-			if (random > 0.5) {
-				_aSpeed = random;
-			} else {
-				_aSpeed = -random;
-			}
-			// 调节音量
-			if (this.soundChannel && this.soundChannel.volume >= 0){
-				this.soundChannel.volume = this.soundChannel.volume + _aSpeed;
-			}
-			this.gameBgMove.onEnterFrame(_aSpeed);
-			this.gameBgCloneMove.onEnterFrame(_aSpeed);
-		}
-
 		// 遇到河流处理
 		private isHitRiver(): void {
-			this.gameCar.scaleX = 1.2;
-			this.gameCar.scaleY = 1.2;
+			this.gameCar.scaleX = 0.8;
+			this.gameCar.scaleY = 0.8;
 		}
 
 		// 跨越河流处理
 		private isAcrossRiver(): void {
-			this.gameCar.scaleX = 1;
-			this.gameCar.scaleY = 1;
-
-			// egret.Tween.get(this.gameCar).to({ scaleX: 1, scaleY: 1 },200,egret.Ease.backIn);
-			setTimeout(() => {
+			egret.Tween.get(this.gameCar).to({ scaleX: 0.8, scaleY: 0.8 },100,egret.Ease.backIn);
+			// setTimeout(() => {
 				Store.gameResult = true;
 				this.onGameOver();
-			}, 1000);
+			// }, 1000);
 		}
 
 		// 判断是否结束
 		private isOver(): boolean {
 			if (Store.distanceLength >= Store.targetDistance) {
 				Store.gameResult = true;
+				document.getElementById('myConsole').innerHTML = 'end';
 				return true;
-			} else if(Store.currentSpeedY <= 0) {
-				Store.gameResult = false;
-				return true;
-			}
+			} 
+			// else if(Store.currentSpeedY < 0) {
+			// 	Store.gameResult = false;
+			// 	return true;
+			// }
 			return false;
 		}
 
@@ -150,9 +170,12 @@ module game {
 		// 游戏结束抛事件
 		private onGameOver() {
 			console.log('onGameOver');
-			this.soundChannel.stop();
-			// this.removeEventListener(egret.Event.ENTER_FRAME, this.startAnimationFrame, this);
-            ViewManager.getInstance().dispatchEvent(this.sceneEvent);
+			// setTimeout(function() {
+				// this.soundChannel.stop();
+				// this.removeEventListener(egret.Event.ENTER_FRAME, this.startAnimationFrame, this);
+				ViewManager.getInstance().dispatchEvent(this.sceneEvent);
+			// }, 2000);
+			
 		}
 
 		/**
@@ -160,28 +183,35 @@ module game {
 		 * Description file loading is successful, start to play the animation
 		 */
 		private startAnimation(e:egret.OrientationEvent): void {
+			
 			// 检测游戏是否结束
 			if (this.isOver()) {
 				this.onGameOver();
 			}
 
 			// 检测是否遇到河流
-			if (Store.distanceLength >= 300) {
+			if (Store.distanceLength >= 1000) {
 				this.isHitRiver();
 			}
 
 			// 检测是否跨越河流，河流宽200，车身长159，所以是300 + 359 取1000
-			if (Store.distanceLength >= 800) {
+			if (Store.distanceLength >= 2000) {
 				this.isAcrossRiver();
 			}
-			
-			let _aSpeed = -Math.floor(e.beta)/10;
+			// alert(e.beta);
+			let _aSpeed = -Math.floor(e.beta-50)/10;
 			// 调节音量
-			if (this.soundChannel && this.soundChannel.volume >= 0){
-				this.soundChannel.volume = this.soundChannel.volume + _aSpeed;
-			}
-			this.gameBgMove.onEnterFrame(_aSpeed);
-			this.gameBgCloneMove.onEnterFrame(_aSpeed);
+			// if (this.soundChannel && this.soundChannel.volume >= 0){
+			// 	this.soundChannel.volume = this.soundChannel.volume + _aSpeed;
+			// }
+			document.getElementById('myConsole2').innerHTML = 'change' + Math.random();
+			this.gameMapArray.forEach(item => {
+				item.onEnterFrame(_aSpeed);
+			})
+			// this.gameMapArray[0].onEnterFrame(_aSpeed);
+			// this.gameMapArray[1].onEnterFrame(_aSpeed);
+			// this.gameBgMove.onEnterFrame(_aSpeed);
+			// this.gameBgCloneMove.onEnterFrame(_aSpeed);
 		}
 	}
 }
